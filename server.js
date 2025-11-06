@@ -17,7 +17,7 @@ const app = express();
 const upload = multer();
 
 app.use(cors({
-  origin: 'http://localhost:3000', // frontend URL
+  origin: process.env.FRONTEND_URL, // frontend URL
   credentials: true, // ✅ allow cookies
    methods: ["GET", "POST", "PUT", "DELETE"],
 }));
