@@ -16,25 +16,14 @@ connectDB();
 const app = express();
 const upload = multer();
 
-const allowedOrigins = ['https://washify-iota.vercel.app'];
-
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-}));
-
-// ✅ Safari fix: respond to preflight requests
-app.options('*', cors({
-  origin: allowedOrigins,
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: ['https://washify-iota.vercel.app'], // ✅ your frontend
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'], // ✅ allow Authorization header
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

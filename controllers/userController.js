@@ -101,6 +101,7 @@ export const loginUser = async (req, res) => {
 
     res.status(200).json({
       message: 'Login successful ✅',
+       token,
       user: formatUser(user),
     });
   } catch (error) {
@@ -111,21 +112,22 @@ export const loginUser = async (req, res) => {
 
 export const validateUser = async (req, res) => {
   try {
-    // console.log('Cookies received:', req.cookies);
-    const token = req.cookies.token;
-    if (!token) return res.json({ valid: false });
+    // ✅ Get token from Authorization header
+    const authHeader = req.headers.authorization;
 
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.json({ valid: false });
+    }
+
+    const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // console.log('Decoded token:', decoded);
 
     const user = await User.findById(decoded.id);
-    // console.log('User found:', user);
-
     if (!user) return res.json({ valid: false });
 
     res.json({ valid: true, user: formatUser(user) });
   } catch (error) {
-    console.error('Validate user error:', error);
+    console.error('Validate user error:', error.message);
     res.json({ valid: false });
   }
 };
