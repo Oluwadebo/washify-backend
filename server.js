@@ -16,10 +16,21 @@ connectDB();
 const app = express();
 const upload = multer();
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://washify-iota.vercel.app", // ✅ your Vercel frontend URL
+];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL, // frontend URL
-  credentials: true, // ✅ allow cookies
-   methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
