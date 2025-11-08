@@ -23,7 +23,7 @@ export const signupUser = async (req, res) => {
     // Check if user already exists
     const userExists = await User.findOne({ email });
     
-    if (userExists) return res.status(400).json({ message: 'User already exists' });
+    if (userExists) return res.json({ message: 'User already exists' });
 
     // Hash password
     const salt = await bcrypt.genSalt(10);
@@ -41,13 +41,13 @@ export const signupUser = async (req, res) => {
       logo,
     });
 
-    res.status(201).json({
+    res.json({
       message: 'User registered successfully ✅',
        user: formatUser(user),
     });
   } catch (error) {
     console.error('Signup error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -66,7 +66,7 @@ export const checkEmail = async (req, res) => {
     }
   } catch (error) {
     console.error('Email check error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -78,35 +78,27 @@ export const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: 'Please enter both email and password' });
+      return res.json({ message: 'Please enter both email and password' });
     }
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: 'No account found with this email' });
+    if (!user) return res.json({ message: 'No account found with this email' });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ message: 'Incorrect password' });
+    if (!isMatch) return res.json({ message: 'Incorrect password' });
 
     // ✅ Generate JWT Token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 // console.log(token);
 
-    // ✅ Send JWT as a secure cookie
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: true, 
-      sameSite: 'None',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
-
-    res.status(200).json({
+    res.json({
       message: 'Login successful ✅',
        token,
       user: formatUser(user),
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -137,9 +129,9 @@ export const validateUser = async (req, res) => {
 export const getProfile = async (req, res) => {
   try {
     
-    if (!req.user) return res.status(401).json({ message: "Not authenticated" });
+    if (!req.user) return res.json({ message: "Not authenticated" });
 
-    res.status(200).json({
+    res.json({
       id: req.user._id,
       FirstName: req.user.FirstName,
       LastName: req.user.LastName,
@@ -151,7 +143,7 @@ export const getProfile = async (req, res) => {
     });
   } catch (error) {
     console.error("Profile fetch error:", error.message);
-    res.status(500).json({ message: "Server error" });
+    res.json({ message: "Server error" });
   }
 };
 

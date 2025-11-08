@@ -10,7 +10,7 @@ router.get('/', protect, async (req, res) => {
     const expenses = await Expense.find({ userId: req.userId }).sort({ date: -1 });
     res.json(expenses);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.json({ message: err.message });
   }
 });
 
@@ -23,9 +23,9 @@ router.post('/', protect, async (req, res) => {
     });
 
     const savedExpense = await newExpense.save();
-    res.status(201).json(savedExpense);
+    res.json(savedExpense);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.json({ message: err.message });
   }
 });
 

@@ -16,12 +16,26 @@ connectDB();
 const app = express();
 const upload = multer();
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:3000',
+];
+
 app.use(
   cors({
-    origin: ['https://washify-iota.vercel.app'], // ✅ your frontend
+    origin: (origin, callback) => {
+      // allow requests with no origin (like Postman or curl)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn(`🚫 CORS blocked request from: ${origin}`);
+        callback(new Error('Not allowed by CORS'));
+      }
+    }, 
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'], // ✅ allow Authorization header
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 

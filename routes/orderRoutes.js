@@ -10,7 +10,7 @@ router.get('/', protect, async (req, res) => {
     const orders = await Order.find({ userId: req.userId }).sort({ date: -1 });
     res.json(orders);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.json({ message: err.message });
   }
 });
 
@@ -19,9 +19,9 @@ router.post('/', protect, async (req, res) => {
   try {
     const newOrder = new Order({ ...req.body, userId: req.userId });
     const savedOrder = await newOrder.save();
-    res.status(201).json(savedOrder);
+    res.json(savedOrder);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.json({ message: err.message });
   }
 });
 
@@ -34,10 +34,10 @@ router.put('/:id', protect, async (req, res) => {
       req.body,
       { new: true }
     );
-    if (!order) return res.status(404).json({ message: 'Order not found' });
+    if (!order) return res.json({ message: 'Order not found' });
     res.json(order);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.json({ message: err.message });
   }
 });
 
@@ -46,10 +46,10 @@ router.delete('/:id', protect, async (req, res) => {
   try {
     const { id } = req.params;
     const order = await Order.findOneAndDelete({ _id: id, userId: req.userId });
-    if (!order) return res.status(404).json({ message: 'Order not found' });
+    if (!order) return res.json({ message: 'Order not found' });
     res.json({ message: 'Order deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.json({ message: err.message });
   }
 });
 
