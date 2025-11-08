@@ -22,17 +22,17 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // allow requests with no origin (like Postman or curl)
-      if (!origin) return callback(null, true);
+    // origin: (origin, callback) => {
+    //   if (!origin) return callback(null, true);
 
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.warn(`🚫 CORS blocked request from: ${origin}`);
-        callback(new Error('Not allowed by CORS'));
-      }
-    }, 
+    //   if (allowedOrigins.includes(origin)) {
+    //     callback(null, true);
+    //   } else {
+    //     console.warn(`🚫 CORS blocked request from: ${origin}`);
+    //     callback(new Error('Not allowed by CORS'));
+    //   }
+    // }, 
+    origin:'https://washify-iota.vercel.app',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

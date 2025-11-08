@@ -29,4 +29,15 @@ router.post('/', protect, async (req, res) => {
   }
 });
 
+router.delete('/:id', protect, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const Epx = await Expense.findOneAndDelete({ _id: id, userId: req.userId });
+    if (!Epx) return res.json({ message: 'Order not found' });
+    res.json({ message: 'Order deleted successfully' });
+  } catch (err) {
+    res.json({ message: err.message });
+  }
+});
+
 export default router;
