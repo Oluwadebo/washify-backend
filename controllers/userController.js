@@ -77,10 +77,6 @@ export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.json({ message: 'Please enter both email and password' });
-    }
-
     const user = await User.findOne({ email });
     if (!user) return res.json({ message: 'No account found with this email' });
 
@@ -88,12 +84,14 @@ export const loginUser = async (req, res) => {
     if (!isMatch) return res.json({ message: 'Incorrect password' });
 
     // ✅ Generate JWT Token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '2d' });
 // console.log(token);
+const decoded = jwt.decode(token);
 
     res.json({
       message: 'Login successful ✅',
        token,
+       expiresAt: decoded.exp,
       user: formatUser(user),
     });
   } catch (error) {
@@ -117,7 +115,7 @@ export const validateUser = async (req, res) => {
     const user = await User.findById(decoded.id);
     if (!user) return res.json({ valid: false });
 
-    res.json({ valid: true, user: formatUser(user) });
+    res.json({ valid: true,expiresAt: decoded.exp, user: formatUser(user) });
   } catch (error) {
     console.error('Validate user error:', error.message);
     res.json({ valid: false });
